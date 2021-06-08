@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\DTO\DefaultUserDTO;
 use App\Repository\UserRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,7 +41,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
-     * @Assert\GreaterThan(3)
+     * @Assert\Length(min = 2)
      */
     private $name;
 
@@ -136,4 +137,10 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function toArray()
+    {
+        return (new DefaultUserDTO($this))->toArray();
+    }
+
 }
