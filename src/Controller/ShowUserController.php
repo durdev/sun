@@ -16,6 +16,7 @@ class ShowUserController extends AbstractController
 
     public function __invoke(User $user): Response
     {
-        return $this->json($user);
+        return $this->json(['data' => $user]);
     }
+
 }

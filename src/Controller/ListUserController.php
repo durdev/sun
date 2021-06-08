@@ -19,4 +19,5 @@ class ListUserController extends AbstractController
 
         return $this->json(compact('data'));
     }
+
 }
