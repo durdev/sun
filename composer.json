@@ -1,4 +1,6 @@
 {
+    "name": "durdev/sun-project",
+    "description": "Central point of the system",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "dev",
