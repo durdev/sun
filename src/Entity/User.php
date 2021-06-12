@@ -138,6 +138,11 @@ class User implements UserInterface
         return $this;
     }
 
+    public function toJson()
+    {
+        return (new DefaultUserDTO($this))->toJson();
+    }
+
     public function toArray()
     {
         return (new DefaultUserDTO($this))->toArray();

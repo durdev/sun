@@ -7,11 +7,7 @@ use App\Entity\User;
 class DefaultUserDTO
 {
 
-    public $id;
-    public $email;
-    public $roles = [];
-    public $password;
-    public $name;
+    private $user;
 
     public function __construct(User $user)
     {
@@ -21,11 +17,21 @@ class DefaultUserDTO
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'email' => $this->email,
-            'roles' => $this->roles,
-            'name' => $this->name,
+            'id' => $this->user->getId(),
+            'email' => $this->user->getEmail(),
+            'roles' => $this->user->getRoles(),
+            'name' => $this->user->getName(),
         ];
+    }
+
+    public function toJson(): string
+    {
+        return json_encode([
+            'id' => $this->user->getId(),
+            'email' => $this->user->getEmail(),
+            'roles' => $this->user->getRoles(),
+            'name' => $this->user->getName(),
+        ]);
     }
 
 }
