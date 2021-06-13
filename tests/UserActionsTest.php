@@ -7,24 +7,19 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class UserActionsTest extends WebTestCase
 {
 
+    use \App\Tests\JwtLogin;
+
     private $token;
     private $client;
 
     public function setUp(): void
     {
-        $this->client = static::createClient();
-        $this->token  = $this->client
-            ->getContainer()
-            ->get('lexik_jwt_authentication.encoder')
-            ->encode([
-                'username' => 'teste@teste.com',
-                'password' => 'testet'
-            ]);
+        $this->client = $this->createAuthenticatedClient();
     }
 
     public function testListUserActionLogin(): void
     {
-        $this->client->request('GET', '/api/users', [], [], ['HTTP_AUTHORIZATION' => "Bearer {$this->token}"]);
+        $this->client->request('GET', '/api/users', [], []);
 
         $this->assertResponseIsSuccessful();
     }

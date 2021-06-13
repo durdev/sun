@@ -4,21 +4,16 @@ namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class JwtTest extends WebTestCase
+class JwtLoginTest extends WebTestCase
 {
+
+    use \App\Tests\JwtLogin;
 
     private $client;
 
     public function setUp(): void
     {
-        $this->client = static::createClient();
-    }
-
-    public function testUnauthenticatedAction()
-    {
-        $this->client->request('GET', '/api/users');
-
-        $this->assertResponseStatusCodeSame(401);
+        $this->client = $this->createAuthenticatedClient();
     }
 
     public function testAuthenticatedAction()
