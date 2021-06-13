@@ -13,8 +13,10 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE: test_db
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sun_test
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
         ports:
           - 3306
 
@@ -25,7 +27,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
+          extensions: mysql
           # coverage: xdebug
 
       - name: Validate composer.json and composer.lock
@@ -42,20 +44,19 @@ jobs:
 
       - name: Install Composer Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
-        
+
       - name: Install JWT Secret
         run: php bin/console lexik:jwt:generate-keypair --overwrite
 
       - name: Run Migration
         run: |
-          php bin/console doctrine:schema:update --force || echo "No migrations found or schema update failed"
-          php bin/console doctrine:migrations:migrate || echo "No migrations found or migration failed"
+          php bin/console doctrine:migrations:migrate
         env:
-          DB_PORT: ${{ job.services.mysql.ports[3306] }}
-          # DATABASE_URL: mysql://root:symfony@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/test_db
+          APP_ENV: test
+          DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/sun_test
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: vendor/bin/phpunit
         # run: php bin/phpunit --coverage-text
         env:
-          DB_PORT: ${{ job.services.mysql.ports[3306] }}
+          DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/sun_test
