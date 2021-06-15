@@ -24,18 +24,21 @@ class UserActionsTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    // public function testStoreUserAction()
-    // {
-    //     # code...
-    // }
+    public function testStoreUserAction()
+    {
+        $this->client->request('POST',
+            '/api/users',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode([
+                'name'     => 'Davi',
+                'email'    => 'daviuchoa@test.com',
+                'password' => '84752#99#$%94#87&59'
+            ])
+        );
 
-    // public function testUpdateUserAction()
-    // {
-    //     # code...
-    // }
+        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+    }
 
-    // public function testDeleteUserAction()
-    // {
-    //     # code...
-    // }
 }
