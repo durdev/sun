@@ -19,7 +19,7 @@ class UserActionsTest extends WebTestCase
 
     public function testListUserActionLogin(): void
     {
-        $this->client->request('GET', '/api/users', [], []);
+        $this->client->request('GET', '/api/users');
 
         $this->assertResponseIsSuccessful();
     }

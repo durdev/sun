@@ -4,31 +4,23 @@ namespace App\Tests;
 
 trait JwtLogin {
 
-    protected function createAuthenticatedClient($username = 'user', $password = 'password')
+    protected function createAuthenticatedClient($username = 'test.user@sun.com', $password = 'test_sun')
     {
         $client = static::createClient();
-        $token  = $client
-            ->getContainer()
-            ->get('lexik_jwt_authentication.encoder')
-            ->encode([
-                'username' => 'teste@teste.com',
-                'password' => 'testet'
-            ]);
+        $client->request(
+            'POST',
+            '/api/login_user',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode([
+                'username' => $username,
+                'password' => $password,
+            ])
+        );
 
-        // $client->request(
-        //     'POST',
-        //     '/api/login_user',
-        //     [],
-        //     [],
-        //     ['CONTENT_TYPE' => 'application/json'],
-        //     json_encode([
-        //         'username' => $username,
-        //         'password' => $password,
-        //     ])
-        // );
-
-        // $data = json_decode($client->getResponse()->getContent(), true);
-        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $data['token']));
 
         return $client;
     }
