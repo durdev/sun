@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/users", name="users.store", methods={"POST"})
+ * @Route("/api/users", name="users.store", methods={"POST"})
  */
 class StoreUserController extends AbstractController
 {
