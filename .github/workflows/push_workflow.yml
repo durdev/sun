@@ -10,16 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
-        image: mysql:5.7
+      postgres:
+        image: postgres
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: sun_test
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: sun_test
         ports:
-          - 3306
-
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
 
@@ -47,17 +50,19 @@ jobs:
 
       - name: Install JWT Secret
         run: php bin/console lexik:jwt:generate-keypair --overwrite
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sun_test
 
       - name: Run Migration
         run: |
           php bin/console doctrine:migrations:migrate
         env:
           APP_ENV: test
-          DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/sun_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sun_test
 
       - name: Run Fixtures
         env:
-          DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/sun_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sun_test
         run: |
           php bin/console doctrine:fixtures:load -n
 
@@ -65,4 +70,4 @@ jobs:
         run: vendor/bin/phpunit
         # run: php bin/phpunit --coverage-text
         env:
-          DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/sun_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sun_test
